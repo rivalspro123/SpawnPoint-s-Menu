@@ -121,7 +121,7 @@ UICorner_6.Parent = TextLabel_2
 
 -- Scripts:
 
-local function GLCZW_fake_script() -- MainFrame.Dragify 
+local function LOSXOUN_fake_script() -- MainFrame.Dragify 
 	local script = Instance.new('LocalScript', MainFrame)
 
 	local player = game.Players.LocalPlayer
@@ -164,8 +164,8 @@ local function GLCZW_fake_script() -- MainFrame.Dragify
 	dragify(script.Parent)
 	
 end
-coroutine.wrap(GLCZW_fake_script)()
-local function BIDK_fake_script() -- SpinAroundPlayerUI.Handler 
+coroutine.wrap(LOSXOUN_fake_script)()
+local function ILLAAP_fake_script() -- SpinAroundPlayerUI.Handler 
 	local script = Instance.new('LocalScript', SpinAroundPlayerUI)
 
 	local Players = game:GetService("Players")
@@ -175,11 +175,16 @@ local function BIDK_fake_script() -- SpinAroundPlayerUI.Handler
 	local localPlayer = Players.LocalPlayer
 	local gui = script.Parent
 	
-	-- Destroy duplicate GUIs
-	for _, existingGui in ipairs(localPlayer:WaitForChild("PlayerGui"):GetChildren()) do
-		if existingGui.Name == gui.Name and existingGui ~= gui then
-			existingGui:Destroy()
-		end
+	-- Ensure only 1 GUI exists
+	local existingGui = localPlayer:FindFirstChild("PlayerGui") and localPlayer.PlayerGui:FindFirstChild(gui.Name)
+	if existingGui and existingGui ~= gui then
+		script.Parent:Destroy() -- destroy this duplicate GUI/script
+		return
+	end
+	
+	-- Move GUI into PlayerGui if not already
+	if not gui:IsDescendantOf(localPlayer.PlayerGui) then
+		gui.Parent = localPlayer.PlayerGui
 	end
 	
 	local radius = 6
@@ -379,4 +384,4 @@ local function BIDK_fake_script() -- SpinAroundPlayerUI.Handler
 		onRespawn()
 	end
 end
-coroutine.wrap(BIDK_fake_script)()
+coroutine.wrap(ILLAAP_fake_script)()

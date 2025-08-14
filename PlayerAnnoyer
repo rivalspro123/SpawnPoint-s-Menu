@@ -1,0 +1,375 @@
+-- Gui to Lua
+-- Version: 3.2
+
+-- Instances:
+
+local SpinAroundPlayerUI = Instance.new("ScreenGui")
+local MainFrame = Instance.new("Frame")
+local UICorner = Instance.new("UICorner")
+local Main = Instance.new("Folder")
+local Username = Instance.new("Folder")
+local TextLabel = Instance.new("TextLabel")
+local UICorner_2 = Instance.new("UICorner")
+local UsernameTextbox = Instance.new("TextBox")
+local UICorner_3 = Instance.new("UICorner")
+local Button = Instance.new("Folder")
+local StartStopButton = Instance.new("TextButton")
+local UICorner_4 = Instance.new("UICorner")
+local Title = Instance.new("Frame")
+local UICorner_5 = Instance.new("UICorner")
+local TextLabel_2 = Instance.new("TextLabel")
+local UICorner_6 = Instance.new("UICorner")
+
+--Properties:
+
+SpinAroundPlayerUI.Name = "SpinAroundPlayerUI"
+SpinAroundPlayerUI.Parent = game.ServerStorage.Finished
+SpinAroundPlayerUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = SpinAroundPlayerUI
+MainFrame.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
+MainFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+MainFrame.BorderSizePixel = 0
+MainFrame.Position = UDim2.new(0.0599369071, 0, 0.163302749, 0)
+MainFrame.Size = UDim2.new(0.165615141, 0, 0.310091734, 0)
+
+UICorner.Parent = MainFrame
+
+Main.Name = "Main"
+Main.Parent = MainFrame
+
+Username.Name = "Username"
+Username.Parent = Main
+
+TextLabel.Parent = Username
+TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.BackgroundTransparency = 1.000
+TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel.BorderSizePixel = 0
+TextLabel.Position = UDim2.new(-0.00476190494, 0, 0.166666672, 0)
+TextLabel.Size = UDim2.new(1, 0, 0.09375, 0)
+TextLabel.Font = Enum.Font.SourceSans
+TextLabel.Text = "Username:"
+TextLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel.TextScaled = true
+TextLabel.TextSize = 14.000
+TextLabel.TextWrapped = true
+
+UICorner_2.Parent = TextLabel
+
+UsernameTextbox.Name = "UsernameTextbox"
+UsernameTextbox.Parent = Username
+UsernameTextbox.BackgroundColor3 = Color3.fromRGB(58, 58, 58)
+UsernameTextbox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+UsernameTextbox.BorderSizePixel = 0
+UsernameTextbox.Position = UDim2.new(0.0142857144, 0, 0.284722209, 0)
+UsernameTextbox.Size = UDim2.new(0.952380955, 0, 0.295857996, 0)
+UsernameTextbox.ClearTextOnFocus = false
+UsernameTextbox.Font = Enum.Font.SourceSans
+UsernameTextbox.Text = ""
+UsernameTextbox.TextColor3 = Color3.fromRGB(0, 0, 0)
+UsernameTextbox.TextSize = 14.000
+
+UICorner_3.Parent = UsernameTextbox
+
+Button.Name = "Button"
+Button.Parent = Main
+
+StartStopButton.Name = "StartStopButton"
+StartStopButton.Parent = Button
+StartStopButton.BackgroundColor3 = Color3.fromRGB(3, 130, 17)
+StartStopButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+StartStopButton.BorderSizePixel = 0
+StartStopButton.Position = UDim2.new(0.104761906, 0, 0.682322502, 0)
+StartStopButton.Size = UDim2.new(0.785714269, 0, 0.230769232, 0)
+StartStopButton.Font = Enum.Font.SourceSansBold
+StartStopButton.Text = "START"
+StartStopButton.TextColor3 = Color3.fromRGB(0, 0, 0)
+StartStopButton.TextScaled = true
+StartStopButton.TextSize = 14.000
+StartStopButton.TextWrapped = true
+
+UICorner_4.Parent = StartStopButton
+
+Title.Name = "Title"
+Title.Parent = MainFrame
+Title.BackgroundColor3 = Color3.fromRGB(58, 58, 58)
+Title.BorderColor3 = Color3.fromRGB(0, 0, 0)
+Title.BorderSizePixel = 0
+Title.Position = UDim2.new(-0.00196791161, 0, -0.00336392713, 0)
+Title.Size = UDim2.new(1.00196791, 0, 0.131632254, 0)
+
+UICorner_5.Parent = Title
+
+TextLabel_2.Parent = Title
+TextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel_2.BackgroundTransparency = 1.000
+TextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+TextLabel_2.BorderSizePixel = 0
+TextLabel_2.Size = UDim2.new(1, 0, 1, 0)
+TextLabel_2.Font = Enum.Font.SourceSans
+TextLabel_2.Text = "Player Annoyer 😎"
+TextLabel_2.TextColor3 = Color3.fromRGB(255, 255, 255)
+TextLabel_2.TextScaled = true
+TextLabel_2.TextSize = 14.000
+TextLabel_2.TextWrapped = true
+
+UICorner_6.Parent = TextLabel_2
+
+-- Scripts:
+
+local function BPSF_fake_script() -- MainFrame.Dragify 
+	local script = Instance.new('LocalScript', MainFrame)
+
+	local player = game.Players.LocalPlayer
+	
+	local UIS = game:GetService("UserInputService")
+	function dragify(Frame)
+		dragToggle = nil
+		dragSpeed = 0.15
+		dragInput = nil
+		dragStart = nil
+		dragPos = nil
+		function updateInput(input)
+			Delta = input.Position - dragStart
+			Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
+			game:GetService("TweenService"):Create(Frame, TweenInfo.new(0.15), {Position = Position}):Play()
+		end
+		Frame.InputBegan:Connect(function(input)
+			if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and UIS:GetFocusedTextBox() == nil then
+				dragToggle = true
+				dragStart = input.Position
+				startPos = Frame.Position
+				input.Changed:Connect(function()
+					if input.UserInputState == Enum.UserInputState.End then
+						dragToggle = false
+					end
+				end)
+			end
+		end)
+		Frame.InputChanged:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+				dragInput = input
+			end
+		end)
+		game:GetService("UserInputService").InputChanged:Connect(function(input)
+			if input == dragInput and dragToggle then
+				updateInput(input)
+			end
+		end)
+	end
+	dragify(script.Parent)
+	
+end
+coroutine.wrap(BPSF_fake_script)()
+local function IAVTVW_fake_script() -- SpinAroundPlayerUI.Handler 
+	local script = Instance.new('LocalScript', SpinAroundPlayerUI)
+
+	local Players = game:GetService("Players")
+	local RunService = game:GetService("RunService")
+	local Workspace = game:GetService("Workspace")
+	
+	local localPlayer = Players.LocalPlayer
+	local gui = script.Parent
+	
+	local radius = 6
+	local speedRange = {10,30}
+	local verticalRange = {-4,4}
+	local pulseCooldown = 0.05
+	local pulseDistance = 4
+	local buttonCooldown = 1
+	
+	-- Persistent state across respawns
+	_G.orbitState = _G.orbitState or {
+		running = false,
+		targetName = "",
+	}
+	
+	local currentAngle = 0
+	local spinSpeed = math.random(speedRange[1],speedRange[2])
+	local verticalOffset = math.random(verticalRange[1]*10,verticalRange[2]*10)/10
+	local direction = math.random(0,1)==0 and -1 or 1
+	local pulseTime = 0
+	local orbitConnection
+	local randomizerThread
+	local buttonLocked = false
+	
+	local startStopButton
+	local usernameTextBox
+	
+	local function acquireUI()
+		local frame = gui:WaitForChild("MainFrame")
+		local main = frame:WaitForChild("Main")
+		startStopButton = main:WaitForChild("Button"):WaitForChild("StartStopButton")
+		usernameTextBox = main:WaitForChild("Username"):WaitForChild("UsernameTextbox")
+	end
+	
+	local function setButtonState(isRunning)
+		if not startStopButton then return end
+		if isRunning then
+			startStopButton.Text = "Stop"
+			startStopButton.BackgroundColor3 = Color3.fromRGB(139,0,0)
+		else
+			startStopButton.Text = "Start"
+			startStopButton.BackgroundColor3 = Color3.fromRGB(0,100,0)
+		end
+	end
+	
+	local function randomizeSpin()
+		spinSpeed = math.random(speedRange[1],speedRange[2])
+		verticalOffset = math.random(verticalRange[1]*10,verticalRange[2]*10)/10
+		direction = math.random(0,1)==0 and -1 or 1
+	end
+	
+	local function findTarget(name)
+		if not name or name == "" then return nil end
+		local lower = string.lower(name)
+		for _, plr in ipairs(Players:GetPlayers()) do
+			if string.lower(plr.Name) == lower or string.lower(plr.DisplayName) == lower then
+				local char = plr.Character
+				if char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart") then
+					return char
+				end
+			end
+		end
+		for _, model in ipairs(Workspace:GetDescendants()) do
+			if model:IsA("Model") and string.lower(model.Name) == lower then
+				if model:FindFirstChild("Humanoid") and model:FindFirstChild("HumanoidRootPart") then
+					return model
+				end
+			end
+		end
+		return nil
+	end
+	
+	local function getMyCharacter()
+		return localPlayer.Character
+	end
+	
+	local function updateOrbit(target, dt)
+		local myChar = getMyCharacter()
+		if not target or not myChar then return end
+		local targetHRP = target:FindFirstChild("HumanoidRootPart")
+		local myHRP = myChar:FindFirstChild("HumanoidRootPart")
+		if not targetHRP or not myHRP then return end
+	
+		currentAngle += spinSpeed * dt * direction
+		pulseTime += dt
+		local pulse = 1
+		if pulseTime >= pulseCooldown then
+			pulseTime = 0
+			pulse = (math.random()>0.5) and 1 or -1
+		end
+		local dynamicRadius = radius + (pulse*pulseDistance)
+		local offsetX = math.cos(currentAngle)*dynamicRadius
+		local offsetZ = math.sin(currentAngle)*dynamicRadius
+		myHRP.CFrame = CFrame.new(targetHRP.Position + Vector3.new(offsetX, verticalOffset, offsetZ), targetHRP.Position)
+	end
+	
+	local function stopOrbit()
+		if orbitConnection then
+			orbitConnection:Disconnect()
+			orbitConnection = nil
+		end
+		if randomizerThread then
+			task.cancel(randomizerThread)
+			randomizerThread = nil
+		end
+	
+		local myChar = getMyCharacter()
+		if myChar then
+			local hrp = myChar:FindFirstChild("HumanoidRootPart")
+			if hrp then
+				-- Reset velocity and rotational velocity
+				hrp.Velocity = Vector3.zero
+				hrp.RotVelocity = Vector3.zero
+				-- Optional: tiny upward offset to prevent being stuck in ground
+				hrp.CFrame += Vector3.new(0,0.1,0)
+			end
+		end
+	end
+	
+	local function startOrbitLoop()
+		stopOrbit()
+		orbitConnection = RunService.Heartbeat:Connect(function(dt)
+			if not _G.orbitState.running then return end
+			local target = findTarget(_G.orbitState.targetName)
+			if target then
+				updateOrbit(target, dt)
+			end
+		end)
+	
+		randomizerThread = task.spawn(function()
+			while _G.orbitState.running do
+				task.wait(math.random(3,10)/10)
+				if _G.orbitState.running then randomizeSpin() end
+			end
+		end)
+	end
+	
+	local function restoreUI()
+		if usernameTextBox then
+			usernameTextBox.Text = _G.orbitState.targetName
+		end
+		setButtonState(_G.orbitState.running)
+	end
+	
+	local function toggle()
+		if buttonLocked then return end
+		buttonLocked = true
+		task.delay(buttonCooldown,function() buttonLocked=false end)
+	
+		if _G.orbitState.running then
+			_G.orbitState.running=false
+			stopOrbit()
+			setButtonState(false)
+		else
+			local name = (usernameTextBox.Text or ""):gsub("^%s*(.-)%s*$","%1")
+			local target = findTarget(name)
+			if not target then
+				if startStopButton then
+					startStopButton.Text = "Player Not Found"
+					startStopButton.BackgroundColor3 = Color3.fromRGB(255,255,255)
+				end
+				task.delay(1,restoreUI)
+				return
+			end
+			if target == getMyCharacter() then
+				if startStopButton then
+					startStopButton.Text = "Can't target self"
+					startStopButton.BackgroundColor3 = Color3.fromRGB(255,255,255)
+				end
+				task.delay(1,restoreUI)
+				return
+			end
+	
+			_G.orbitState.running = true
+			_G.orbitState.targetName = name
+			startOrbitLoop()
+			setButtonState(true)
+		end
+	end
+	
+	-- Init
+	acquireUI()
+	restoreUI()
+	startStopButton.Activated:Connect(toggle)
+	
+	-- Reconnect on respawn
+	local function onRespawn()
+		stopOrbit()
+		task.wait(0.25)
+		acquireUI()
+		restoreUI()
+		if _G.orbitState.running and _G.orbitState.targetName ~= "" then
+			startOrbitLoop()
+		end
+	end
+	
+	localPlayer.CharacterAdded:Connect(onRespawn)
+	if localPlayer.Character then
+		onRespawn()
+	end
+end
+coroutine.wrap(IAVTVW_fake_script)()

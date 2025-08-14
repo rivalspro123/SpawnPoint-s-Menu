@@ -3,6 +3,8 @@
 
 -- Instances:
 
+local player = game.Players.LocalPlayer
+
 local SpinAroundPlayerUI = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local UICorner = Instance.new("UICorner")
@@ -23,7 +25,7 @@ local UICorner_6 = Instance.new("UICorner")
 --Properties:
 
 SpinAroundPlayerUI.Name = "SpinAroundPlayerUI"
-SpinAroundPlayerUI.Parent = game.ServerStorage.Finished
+SpinAroundPlayerUI.Parent = player:WaitForChild("PlayerGui")
 SpinAroundPlayerUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 MainFrame.Name = "MainFrame"
@@ -119,7 +121,7 @@ UICorner_6.Parent = TextLabel_2
 
 -- Scripts:
 
-local function BPSF_fake_script() -- MainFrame.Dragify 
+local function YHTUSR_fake_script() -- MainFrame.Dragify 
 	local script = Instance.new('LocalScript', MainFrame)
 
 	local player = game.Players.LocalPlayer
@@ -162,8 +164,8 @@ local function BPSF_fake_script() -- MainFrame.Dragify
 	dragify(script.Parent)
 	
 end
-coroutine.wrap(BPSF_fake_script)()
-local function IAVTVW_fake_script() -- SpinAroundPlayerUI.Handler 
+coroutine.wrap(YHTUSR_fake_script)()
+local function LIYVMU_fake_script() -- SpinAroundPlayerUI.Handler 
 	local script = Instance.new('LocalScript', SpinAroundPlayerUI)
 
 	local Players = game:GetService("Players")
@@ -372,4 +374,4 @@ local function IAVTVW_fake_script() -- SpinAroundPlayerUI.Handler
 		onRespawn()
 	end
 end
-coroutine.wrap(IAVTVW_fake_script)()
+coroutine.wrap(LIYVMU_fake_script)()

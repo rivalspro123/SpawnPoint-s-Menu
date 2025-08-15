@@ -3,8 +3,6 @@
 
 -- Instances:
 
-local player = game.Players.LocalPlayer
-
 local SpinAroundPlayerUI = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local UICorner = Instance.new("UICorner")
@@ -25,7 +23,7 @@ local UICorner_6 = Instance.new("UICorner")
 --Properties:
 
 SpinAroundPlayerUI.Name = "SpinAroundPlayerUI"
-SpinAroundPlayerUI.Parent = player:WaitForChild("PlayerGui")
+SpinAroundPlayerUI.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 SpinAroundPlayerUI.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 MainFrame.Name = "MainFrame"
@@ -34,7 +32,7 @@ MainFrame.BackgroundColor3 = Color3.fromRGB(31, 31, 31)
 MainFrame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 MainFrame.BorderSizePixel = 0
 MainFrame.Position = UDim2.new(0.0599369071, 0, 0.163302749, 0)
-MainFrame.Size = UDim2.new(0.165615141, 0, 0.310091734, 0)
+MainFrame.Size = UDim2.new(0.078075707, 0, 0.218348622, 0)
 
 UICorner.Parent = MainFrame
 
@@ -121,68 +119,23 @@ UICorner_6.Parent = TextLabel_2
 
 -- Scripts:
 
-local function LOSXOUN_fake_script() -- MainFrame.Dragify 
-	local script = Instance.new('LocalScript', MainFrame)
-
-	local player = game.Players.LocalPlayer
-	
-	local UIS = game:GetService("UserInputService")
-	function dragify(Frame)
-		dragToggle = nil
-		dragSpeed = 0.15
-		dragInput = nil
-		dragStart = nil
-		dragPos = nil
-		function updateInput(input)
-			Delta = input.Position - dragStart
-			Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
-			game:GetService("TweenService"):Create(Frame, TweenInfo.new(0.15), {Position = Position}):Play()
-		end
-		Frame.InputBegan:Connect(function(input)
-			if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and UIS:GetFocusedTextBox() == nil then
-				dragToggle = true
-				dragStart = input.Position
-				startPos = Frame.Position
-				input.Changed:Connect(function()
-					if input.UserInputState == Enum.UserInputState.End then
-						dragToggle = false
-					end
-				end)
-			end
-		end)
-		Frame.InputChanged:Connect(function(input)
-			if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-				dragInput = input
-			end
-		end)
-		game:GetService("UserInputService").InputChanged:Connect(function(input)
-			if input == dragInput and dragToggle then
-				updateInput(input)
-			end
-		end)
-	end
-	dragify(script.Parent)
-	
-end
-coroutine.wrap(LOSXOUN_fake_script)()
-local function ILLAAP_fake_script() -- SpinAroundPlayerUI.Handler 
+local function TQCEX_fake_script() -- SpinAroundPlayerUI.Handler 
 	local script = Instance.new('LocalScript', SpinAroundPlayerUI)
 
 	local Players = game:GetService("Players")
 	local RunService = game:GetService("RunService")
 	local Workspace = game:GetService("Workspace")
+	local Camera = Workspace:FindFirstChild("Camera") or Workspace:FindFirstChildWhichIsA("Camera")
 	
 	local localPlayer = Players.LocalPlayer
 	local gui = script.Parent
 	
-	-- Ensure only 1 GUI exists
 	local existingGui = localPlayer:FindFirstChild("PlayerGui") and localPlayer.PlayerGui:FindFirstChild(gui.Name)
 	if existingGui and existingGui ~= gui then
-		script.Parent:Destroy() -- destroy this duplicate GUI/script
+		script.Parent:Destroy()
 		return
 	end
 	
-	-- Move GUI into PlayerGui if not already
 	if not gui:IsDescendantOf(localPlayer.PlayerGui) then
 		gui.Parent = localPlayer.PlayerGui
 	end
@@ -194,7 +147,6 @@ local function ILLAAP_fake_script() -- SpinAroundPlayerUI.Handler
 	local pulseDistance = 4
 	local buttonCooldown = 1
 	
-	-- Persistent state across respawns
 	_G.orbitState = _G.orbitState or {
 		running = false,
 		targetName = "",
@@ -242,14 +194,14 @@ local function ILLAAP_fake_script() -- SpinAroundPlayerUI.Handler
 		for _, plr in ipairs(Players:GetPlayers()) do
 			if string.lower(plr.Name) == lower or string.lower(plr.DisplayName) == lower then
 				local char = plr.Character
-				if char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart") then
+				if char and char:FindFirstChild("Humanoid") and char:FindFirstChild("HumanoidRootPart") and char:FindFirstChild("Head") then
 					return char
 				end
 			end
 		end
 		for _, model in ipairs(Workspace:GetDescendants()) do
 			if model:IsA("Model") and string.lower(model.Name) == lower then
-				if model:FindFirstChild("Humanoid") and model:FindFirstChild("HumanoidRootPart") then
+				if model:FindFirstChild("Humanoid") and model:FindFirstChild("HumanoidRootPart") and model:FindFirstChild("Head") then
 					return model
 				end
 			end
@@ -264,21 +216,35 @@ local function ILLAAP_fake_script() -- SpinAroundPlayerUI.Handler
 	local function updateOrbit(target, dt)
 		local myChar = getMyCharacter()
 		if not target or not myChar then return end
-		local targetHRP = target:FindFirstChild("HumanoidRootPart")
+	
+		local targetHead = target:FindFirstChild("Head")
 		local myHRP = myChar:FindFirstChild("HumanoidRootPart")
-		if not targetHRP or not myHRP then return end
+		if not targetHead or not myHRP then return end
 	
 		currentAngle += spinSpeed * dt * direction
 		pulseTime += dt
 		local pulse = 1
 		if pulseTime >= pulseCooldown then
 			pulseTime = 0
-			pulse = (math.random()>0.5) and 1 or -1
+			pulse = (math.random() > 0.5) and 1 or -1
 		end
-		local dynamicRadius = radius + (pulse*pulseDistance)
-		local offsetX = math.cos(currentAngle)*dynamicRadius
-		local offsetZ = math.sin(currentAngle)*dynamicRadius
-		myHRP.CFrame = CFrame.new(targetHRP.Position + Vector3.new(offsetX, verticalOffset, offsetZ), targetHRP.Position)
+	
+		local dynamicRadius = radius + (pulse * pulseDistance)
+		local offsetX = math.cos(currentAngle) * dynamicRadius
+		local offsetZ = math.sin(currentAngle) * dynamicRadius
+	
+		myHRP.CFrame = CFrame.new(
+			targetHead.Position + Vector3.new(offsetX, verticalOffset, offsetZ),
+			targetHead.Position
+		)
+	
+		if Camera then
+			local targetHumanoid = target:FindFirstChild("Humanoid")
+			if targetHumanoid then
+				Camera.CameraType = Enum.CameraType.Custom
+				Camera.CameraSubject = targetHumanoid
+			end
+		end
 	end
 	
 	local function stopOrbit()
@@ -291,13 +257,11 @@ local function ILLAAP_fake_script() -- SpinAroundPlayerUI.Handler
 			randomizerThread = nil
 		end
 	
-		local myChar = getMyCharacter()
-		if myChar then
-			local hrp = myChar:FindFirstChild("HumanoidRootPart")
-			if hrp then
-				hrp.Velocity = Vector3.zero
-				hrp.RotVelocity = Vector3.zero
-				hrp.CFrame += Vector3.new(0,0.1,0)
+		if Camera then
+			local myChar = getMyCharacter()
+			if myChar and myChar:FindFirstChild("Humanoid") then
+				Camera.CameraType = Enum.CameraType.Custom
+				Camera.CameraSubject = myChar:FindFirstChild("Humanoid")
 			end
 		end
 	end
@@ -333,7 +297,7 @@ local function ILLAAP_fake_script() -- SpinAroundPlayerUI.Handler
 		task.delay(buttonCooldown,function() buttonLocked=false end)
 	
 		if _G.orbitState.running then
-			_G.orbitState.running=false
+			_G.orbitState.running = false
 			stopOrbit()
 			setButtonState(false)
 		else
@@ -344,7 +308,7 @@ local function ILLAAP_fake_script() -- SpinAroundPlayerUI.Handler
 					startStopButton.Text = "Player Not Found"
 					startStopButton.BackgroundColor3 = Color3.fromRGB(255,255,255)
 				end
-				task.delay(1,restoreUI)
+				task.delay(1, restoreUI)
 				return
 			end
 			if target == getMyCharacter() then
@@ -352,7 +316,7 @@ local function ILLAAP_fake_script() -- SpinAroundPlayerUI.Handler
 					startStopButton.Text = "Can't target self"
 					startStopButton.BackgroundColor3 = Color3.fromRGB(255,255,255)
 				end
-				task.delay(1,restoreUI)
+				task.delay(1, restoreUI)
 				return
 			end
 	
@@ -363,25 +327,65 @@ local function ILLAAP_fake_script() -- SpinAroundPlayerUI.Handler
 		end
 	end
 	
-	-- Init
-	acquireUI()
-	restoreUI()
-	startStopButton.Activated:Connect(toggle)
-	
-	-- Reconnect on respawn
-	local function onRespawn()
-		stopOrbit()
-		task.wait(0.25)
+	local function init()
 		acquireUI()
 		restoreUI()
+		startStopButton.Activated:Connect(toggle)
 		if _G.orbitState.running and _G.orbitState.targetName ~= "" then
 			startOrbitLoop()
 		end
 	end
 	
-	localPlayer.CharacterAdded:Connect(onRespawn)
-	if localPlayer.Character then
-		onRespawn()
-	end
+	init()
+	
+	localPlayer.CharacterAdded:Connect(function()
+		stopOrbit()
+		task.wait(0.25)
+		init()
+	end)
 end
-coroutine.wrap(ILLAAP_fake_script)()
+coroutine.wrap(TQCEX_fake_script)()
+local function FUXJW_fake_script() -- MainFrame.Dragify 
+	local script = Instance.new('LocalScript', MainFrame)
+
+	local player = game.Players.LocalPlayer
+	
+	local UIS = game:GetService("UserInputService")
+	function dragify(Frame)
+		dragToggle = nil
+		dragSpeed = 0.15
+		dragInput = nil
+		dragStart = nil
+		dragPos = nil
+		function updateInput(input)
+			Delta = input.Position - dragStart
+			Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + Delta.X, startPos.Y.Scale, startPos.Y.Offset + Delta.Y)
+			game:GetService("TweenService"):Create(Frame, TweenInfo.new(0.15), {Position = Position}):Play()
+		end
+		Frame.InputBegan:Connect(function(input)
+			if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) and UIS:GetFocusedTextBox() == nil then
+				dragToggle = true
+				dragStart = input.Position
+				startPos = Frame.Position
+				input.Changed:Connect(function()
+					if input.UserInputState == Enum.UserInputState.End then
+						dragToggle = false
+					end
+				end)
+			end
+		end)
+		Frame.InputChanged:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+				dragInput = input
+			end
+		end)
+		game:GetService("UserInputService").InputChanged:Connect(function(input)
+			if input == dragInput and dragToggle then
+				updateInput(input)
+			end
+		end)
+	end
+	dragify(script.Parent)
+	
+end
+coroutine.wrap(FUXJW_fake_script)()

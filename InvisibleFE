@@ -1,0 +1,127 @@
+-- Prevent multiple executions
+if _G.InvisibleScriptLoaded then
+	-- If already loaded and invisible, make visible
+	if _G.IsInvisible then
+		local Player = game:GetService("Players").LocalPlayer
+		if Player.Character and Player.Character:FindFirstChild("Humanoid") then
+			Player.Character.Humanoid:UnequipTools()
+			Player.Character.HumanoidRootPart.Transparency = 0
+			for _, part in pairs(Player.Character:GetDescendants()) do
+				if part:IsA("BasePart") then
+					part.Transparency = 0
+					part.CanCollide = true
+				elseif part:IsA("Decal") then
+					part.Transparency = 0
+				end
+			end
+		end
+	end
+	script:Destroy()
+	return
+end
+_G.InvisibleScriptLoaded = true
+_G.IsInvisible = false
+
+--Settings
+local Transparency = true
+local NoClip = false
+local ToggleKey = Enum.KeyCode.E
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Player = Players.LocalPlayer
+local RealCharacter = Player.Character or Player.CharacterAdded:Wait()
+
+-- Clone real character
+RealCharacter.Archivable = true
+local FakeCharacter = RealCharacter:Clone()
+local Part = Instance.new("Part", workspace)
+Part.Anchored = true
+Part.Size = Vector3.new(200,1,200)
+Part.CFrame = CFrame.new(0,-500,0)
+Part.CanCollide = true
+FakeCharacter.Parent = workspace
+FakeCharacter.HumanoidRootPart.CFrame = Part.CFrame * CFrame.new(0,5,0)
+
+-- Disable LocalScripts in clone
+for _, v in pairs(RealCharacter:GetChildren()) do
+	if v:IsA("LocalScript") then
+		local clone = v:Clone()
+		clone.Disabled = true
+		clone.Parent = FakeCharacter
+	end
+end
+
+-- Make clone transparent if needed
+if Transparency then
+	for _, v in pairs(FakeCharacter:GetDescendants()) do
+		if v:IsA("BasePart") then
+			v.Transparency = 0.7
+		end
+	end
+end
+
+local PseudoAnchor = FakeCharacter.HumanoidRootPart
+
+-- Keep fake anchored and optionally no-clip
+RunService.RenderStepped:Connect(function()
+	if PseudoAnchor then
+		PseudoAnchor.CFrame = Part.CFrame * CFrame.new(0,5,0)
+	end
+	if NoClip then
+		FakeCharacter.Humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+	end
+end)
+
+-- Core invisibility toggle function
+local function Invisible()
+	if _G.IsInvisible == false then
+		local StoredCF = RealCharacter.HumanoidRootPart.CFrame
+		RealCharacter.HumanoidRootPart.CFrame = FakeCharacter.HumanoidRootPart.CFrame
+		FakeCharacter.HumanoidRootPart.CFrame = StoredCF
+		RealCharacter.Humanoid:UnequipTools()
+		Player.Character = FakeCharacter
+		workspace.CurrentCamera.CameraSubject = FakeCharacter.Humanoid
+		PseudoAnchor = RealCharacter.HumanoidRootPart
+		for _, v in pairs(FakeCharacter:GetChildren()) do
+			if v:IsA("LocalScript") then
+				v.Disabled = false
+			end
+		end
+		_G.IsInvisible = true
+	else
+		local StoredCF = FakeCharacter.HumanoidRootPart.CFrame
+		FakeCharacter.HumanoidRootPart.CFrame = RealCharacter.HumanoidRootPart.CFrame
+		RealCharacter.HumanoidRootPart.CFrame = StoredCF
+		FakeCharacter.Humanoid:UnequipTools()
+		Player.Character = RealCharacter
+		workspace.CurrentCamera.CameraSubject = RealCharacter.Humanoid
+		PseudoAnchor = FakeCharacter.HumanoidRootPart
+		for _, v in pairs(FakeCharacter:GetChildren()) do
+			if v:IsA("LocalScript") then
+				v.Disabled = true
+			end
+		end
+		_G.IsInvisible = false
+	end
+end
+
+-- Toggle invisibility with E key
+UserInputService.InputBegan:Connect(function(input, processed)
+	if processed then return end
+	if input.UserInputType == Enum.UserInputType.Keyboard and input.KeyCode == ToggleKey then
+		Invisible()
+	end
+end)
+
+-- Notification once
+local Sound = Instance.new("Sound", game:GetService("SoundService"))
+Sound.SoundId = "rbxassetid://232127604"
+Sound:Play()
+game:GetService("StarterGui"):SetCore("SendNotification", {
+	["Title"] = "Invisible Toggle Loaded",
+	["Text"] = "Press E to toggle invisibility.",
+	["Duration"] = 10,
+	["Button1"] = "Okay."
+})
